@@ -34,17 +34,21 @@ def dump_data(data: dict):
         json.dump(data, fp)
 
 
-url = 'https://cubaparcel.com/tienda/'
+urls = ['https://cubaparcel.com/tienda/', 'https://cubaparcel.com/product-category/accesorios-de-autos/',
+        'https://cubaparcel.com/product-category/combos/']
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1'}
 payload = {
     'query': 'test'
 }
 
-response = requests.get(url, data=payload, headers=headers, verify=False)
-soup = BeautifulSoup(response.text, 'html.parser')
+links = []
 
-links = soup.find_all('li', {"class": "product-category"})
+for url in urls:
+    response = requests.get(url, data=payload, headers=headers, verify=False)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+links += soup.find_all('li', {"class": "product-category"})
 
 for index, i in enumerate(links):
     links[index] = extract_href(str(i.find_all('a')[0]))
